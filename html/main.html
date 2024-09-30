@@ -101,16 +101,18 @@
 	<script src="js/test.js" onload="runDefold()"></script>
 
 	<script id='engine-start' type='text/javascript'>
-		var runningFromFileWarning = document.getElementById("running-from-file-warning");
+		var runningFromFileWarning = document.getElementById("running-from-file-warning"),
+			jsApp;
 		if (window.location.href.startsWith("file://"))
 			runningFromFileWarning.style.display = "block";
 		else {
 			runDefold = function(){
+				jsApp = new JSApp("{{project.title}}");
 				EngineLoader.load("canvas", "{{exe-name}}");
 				runningFromFileWarning.parentNode.removeChild(runningFromFileWarning);
 			};
 			if(isLoaded)
-				runDefold();	
+				runDefold();
 		}
 	</script>
 </body>
