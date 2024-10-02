@@ -12,7 +12,7 @@ use_accelerometer = 0
 
 [display]
 width = 640
-height = 1024
+height = 960
 samples = 1
 
 [ios]

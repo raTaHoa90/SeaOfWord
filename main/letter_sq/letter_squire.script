@@ -1,0 +1,28 @@
+function init(self)
+	label.set_text("#label_letter", self.letter or "")
+end
+
+local function set_letter(self, letter)
+	self.letter = letter
+	label.set_text("#label_letter", self.letter)
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+
+	--go.animate(url, property, playback, to, easing, duration)
+end
+
+function on_input(self, action_id, action)
+	-- Add input-handling code here. The game object this script is attached to
+	-- must have acquired input focus:
+	--
+	--    msg.post(".", "acquire_input_focus")
+	--
+	-- All mapped input bindings will be received. Mouse and touch input will
+	-- be received regardless of where on the screen it happened.
+	-- Learn more: https://defold.com/manuals/input/
+	-- Remove this function if not needed
+end
