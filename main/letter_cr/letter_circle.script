@@ -1,0 +1,25 @@
+require "utils.func"
+go.property("selected", false)
+go.property("letter", H(""))
+
+local function set_letter(self, letter)
+	if self.letter ~= letter then
+		self.letter = letter
+	end
+	label.set_text("#label_letter",  hash_to_str(self.letter))
+end
+
+function init(self)
+	self.selected = false
+	set_letter(self, self.letter or H(""))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_letter") then
+		set_letter(self, H(message.letter))
+	elseif message_id == hash("selectable") then
+		go.animate("#sprite", 'tint', go.PLAYBACK_ONCE_FORWARD, vmath.vector4(0.9137254901960784, 0.43529411764705883, 0.6431372549019608, 1), go.EASING_INOUTQUAD, 0.25)
+	elseif message_id == hash("deselectable") then
+		go.animate("#sprite", 'tint', go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1, 1, 1, 1), go.EASING_INOUTQUAD, 0.25)
+	end
+end

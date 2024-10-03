@@ -1,0 +1,19 @@
+images {
+  image: "/assets/sprites/background.png"
+}
+images {
+  image: "/assets/sprites/arc-full.png"
+}
+images {
+  image: "/assets/sprites/button-background.png"
+}
+images {
+  image: "/assets/sprites/circle.png"
+}
+images {
+  image: "/assets/sprites/squire.png"
+}
+images {
+  image: "/assets/sprites/dialog.png"
+}
+extrude_borders: 2

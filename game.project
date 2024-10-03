@@ -1,6 +1,7 @@
 [project]
 title = SeaOfWord
 developer = Сергеев Данила
+bundle_resources = /resources
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -11,7 +12,8 @@ use_accelerometer = 0
 
 [display]
 width = 640
-height = 1136
+height = 960
+samples = 1
 
 [ios]
 app_icon_120x120 = /assets/app_icons/icon_120.png
@@ -48,4 +50,11 @@ velocity_threshold = 100.0
 
 [resource]
 http_cache = 0
+
+[html5]
+show_made_with_defold = 0
+show_fullscreen_button = 0
+show_console_banner = 0
+cssfile = /builtins/manifests/web/dark_theme.css
+htmlfile = /html/main.html
 
