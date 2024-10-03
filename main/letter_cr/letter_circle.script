@@ -1,0 +1,20 @@
+go.property("selected", false)
+go.property("letter", H(""))
+
+local function set_letter(self, letter)
+	if self.letter ~= letter then
+		self.letter = letter
+	end
+	label.set_text("#label_letter",  hash_to_str(self.letter))
+end
+
+function init(self)
+	self.selected = false
+	set_letter(self, self.letter or H(""))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_letter") then
+		set_letter(self, H(message.letter))
+	end
+end

@@ -1,28 +1,30 @@
 name: "main"
+instances {
+  id: "letters_cr_line"
+  prototype: "/main/letter_cr/letters_cr_line.go"
+  position {
+    y: -300.0
+  }
+}
+instances {
+  id: "select_letters"
+  prototype: "/main/letter_sq/letters_sq_line.go"
+  position {
+    y: -110.0
+  }
+  scale3 {
+    x: 0.75
+    y: 0.75
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "go"
+  children: "letters_cr_line"
+  children: "select_letters"
   data: "components {\n"
   "  id: \"main\"\n"
   "  component: \"/main/main.script\"\n"
-  "}\n"
-  "embedded_components {\n"
-  "  id: \"circle\"\n"
-  "  type: \"sprite\"\n"
-  "  data: \"default_animation: \\\"arc-full\\\"\\n"
-  "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "textures {\\n"
-  "  sampler: \\\"texture_sampler\\\"\\n"
-  "  texture: \\\"/main/game-sprites.atlas\\\"\\n"
-  "}\\n"
-  "\"\n"
-  "  position {\n"
-  "    y: -300.0\n"
-  "  }\n"
-  "  scale {\n"
-  "    x: 0.5\n"
-  "    y: 0.5\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"background\"\n"
