@@ -1,5 +1,6 @@
 require "utils.func"
 local Array = require "utils.arrays"
+local LevelWords = require "utils.levels"
 local circleDiametr = 147
 
 local lettersHash = {}
@@ -110,9 +111,11 @@ function on_input(self, action_id, action)
 				self.word = ""
 			end
 		elseif action.released then
-			print(action)
 			if self.select then
-				-- msg.post(???, "test_word_event", { word = self.word })
+				local lineWord = LevelWords:getLineWord(self.word)
+				if lineWord then 
+					msg.post(lineWord.line, "view_word", { word = self.word, good = true })
+				end
 				print("final word: ", self.word)
 				msg.post("/select_letters", "init_word", {word = ""})
 				for i, letter in ipairs(self.select) do

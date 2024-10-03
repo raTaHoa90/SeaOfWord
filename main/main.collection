@@ -21,6 +21,7 @@ scale_along_z: 0
 embedded_instances {
   id: "go"
   children: "letters_cr_line"
+  children: "lines_word"
   children: "select_letters"
   data: "components {\n"
   "  id: \"main\"\n"
@@ -55,4 +56,8 @@ embedded_instances {
     x: 320.0
     y: 568.0
   }
+}
+embedded_instances {
+  id: "lines_word"
+  data: ""
 }

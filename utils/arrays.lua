@@ -1078,8 +1078,22 @@ Methods = {
 		end
 
 		return Next
-	end
+	end,
 
+	-- --------------------------------------------------
+	-- edited by raTaHoa
+	-- --------------------------------------------------
+
+	Shuffle = function (t)
+		math.randomseed(os.time())
+		local s = {}
+		for i = 1, #t do s[i] = t[i] end
+		for i = #t, 2, -1 do
+			local j = math.random(i)
+			s[i], s[j] = s[j], s[i]
+		end
+		return s
+	end
 }
 
 Array = {

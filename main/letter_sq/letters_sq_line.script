@@ -23,16 +23,15 @@ function final(self)
 	end
 end
 
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 function on_message(self, message_id, message, sender)
 	if message_id == hash("init_word") then
 		initWord(self, message.word)
 	elseif message_id == hash("view_word") then
 		self.wline:viewText()
+		if message.good then
+			for i, cell in ipairs(self.wline.cells) do
+				msg.post(cell, "letter_good")
+			end
+		end
 	end
 end
