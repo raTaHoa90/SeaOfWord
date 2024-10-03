@@ -1,3 +1,4 @@
+local utf8 = require "utils.utf8"
 local mt = getmetatable("String")
 
 --[[
@@ -8,45 +9,51 @@ Author: Cosmo
 VK: vk.me/cosui
 TG: t.me/cosmo_way
 BH: blast.hk/members/217639
+
+Edited by raTaHoa
 ]]
+
+function mt.__index:length()
+	return utf8.len(self)
+end
 
 function mt.__index:insert(implant, pos)
 	if pos == nil then
 		return self .. implant
 	end
-	return self:sub(1, pos) .. implant .. self:sub(pos + 1)
+	return utf8.sub(self, 1, pos) .. implant .. utf8.sub(self, pos + 1)
 end
 
 function mt.__index:extract(pattern)
-	self = self:gsub(pattern, "")
+	self = utf8.utf8gsub(self, pattern, "")
 	return self
 end
 
 function mt.__index:array()
 	local array = {}
-	for s in self:gmatch(".") do
+	for s in utf8.gmatch(self,".") do
 		array[#array + 1] = s
 	end
 	return array
 end
 
 function mt.__index:isEmpty()
-	return self:find("%S") == nil
+	return utf8.find(self, "%S") == nil
 end
 
 function mt.__index:isDigit()
-	return self:find("%D") == nil
+	return utf8.find(self, "%D") == nil
 end
 
 function mt.__index:isAlpha()
-	return self:find("[%d%p]") == nil
+	return utf8.find(self, "[%d%p]") == nil
 end
 
 function mt.__index:split(sep, plain)   
 	local result, pos = {}, 1
 	repeat
-		local s, f = self:find(sep or " ", pos, plain)
-		local t = self:sub(pos, s and s - 1)
+		local s, f = utf8.find(self, sep or " ", pos, plain)
+		local t = utf8.sub(self,pos, s and s - 1)
 		if t ~= "" then
 			result[#result + 1] = t
 		end
@@ -56,15 +63,15 @@ function mt.__index:split(sep, plain)
 end
 
 function mt.__index:isSpace()
-	return self:find("^[%s%c]*$") ~= nil
+	return utf8.find(self, "^[%s%c]*$") ~= nil
 end
 
 function mt.__index:isUpper()
-	return self:upper() == self
+	return utf8.upper(self) == self
 end
 
 function mt.__index:isLower()
-	return self:lower() == self
+	return utf8.lower(self) == self
 end
 
 function mt.__index:isSimilar(str)
@@ -72,45 +79,45 @@ function mt.__index:isSimilar(str)
 end
 
 function mt.__index:isTitle()
-	local p = self:find("[A-zА-яЁё]")
-	local let = self:sub(p, p)
+	local p = utf8.find(self, "[A-zА-яЁё]")
+	local let = utf8.sub(self, p, p)
 	return let:isSimilar(let:upper())
 end
 
 function mt.__index:startsWith(str)
-	return self:sub(1, #str):isSimilar(str)
+	return utf8.sub(self, 1, #str):isSimilar(str)
 end
 
 function mt.__index:endsWith(str)
-	return self:sub(#self - #str + 1, #self):isSimilar(str)
+	return utf8.sub(self, self:length() - #str + 1, self:length()):isSimilar(str)
 end
 
 function mt.__index:capitalize()
-	local cap = self:sub(1, 1):upper()
-	self = self:gsub("^.", cap)
+	local cap = utf8.sub(self, 1, 1):upper()
+	self = utf8.gsub(self, "^.", cap)
 	return self
 end
 
 function mt.__index:tabsToSpace(count)
 	local spaces = (" "):rep(count or 4)
-	self = self:gsub("\t", spaces)
+	self = utf8.gsub(self, "\t", spaces)
 	return self
 end
 
 function mt.__index:spaceToTabs(count)
 	local spaces = (" "):rep(count or 4)
-	self = self:gsub(spaces, "\t")
+	self = utf8.gsub(self, spaces, "\t")
 	return self
 end
 
 function mt.__index:center(width, char)
-	local len = width - #self
+	local len = width - self:length()
 	local s = string.rep(char or " ", len) 
 	return s:insert(self, math.ceil(len / 2))
 end
 
 function mt.__index:count(search, p1, p2)
-	local area = self:sub(p1 or 1, p2 or #self)
+	local area = utf8.sub(self, p1 or 1, p2 or self:length())
 	local count, pos = 0, p1 or 1
 	repeat
 		local s, f = area:find(search, pos, true)
@@ -121,23 +128,23 @@ function mt.__index:count(search, p1, p2)
 end
 
 function mt.__index:trimEnd()
-	self = self:gsub("%s*$", "")
+	self = utf8.gsub(self, "%s*$", "")
 	return self
 end
 
 function mt.__index:trimStart()
-	self = self:gsub("^%s*", "")
+	self = utf8.gsub(self, "^%s*", "")
 	return self
 end
 
 function mt.__index:trim()
-	self = self:match("^%s*(.-)%s*$")
+	self = utf8.match(self, "^%s*(.-)%s*$")
 	return self
 end
 
 function mt.__index:swapCase()
 	local result = {}
-	for s in self:gmatch(".") do
+	for s in utf8.gmatch(self, ".") do
 		if s:isAlpha() then
 			s = s:isLower() and s:upper() or s:lower()
 		end
@@ -148,7 +155,7 @@ end
 
 function mt.__index:splitEqually(width)
 	assert(width > 0, "Width less than zero")
-	if width >= self:len() then
+	if width >= self:length() then
 		return { self }
 	end
 
@@ -157,14 +164,14 @@ function mt.__index:splitEqually(width)
 		if #result == 0 or #result[#result] >= width then
 			result[#result + 1] = ""
 		end
-		result[#result] = result[#result] .. self:sub(i, i)
+		result[#result] = result[#result] .. utf8.sub(self, i, i)
 		i = i + 1
-	until i > #self
+	until i > self:length()
 	return result
 end
 
 function mt.__index:rFind(pattern, pos, plain)
-	local i = pos or #self
+	local i = pos or self:length()
 	repeat
 		local result = { self:find(pattern, i, plain) }
 		if next(result) ~= nil then
@@ -189,18 +196,18 @@ function mt.__index:wrap(width)
 end
 
 function mt.__index:levDist(str)
-	if #self == 0 then
-		return #str
-	elseif #str == 0 then
-		return #self
+	if self:length() == 0 then
+		return str:length()
+	elseif str:length() == 0 then
+		return self:length()
 	elseif self == str then
 		return 0
 	end
 
 	local matrix = {}
-	for i = 0, #self do matrix[i] = {}; matrix[i][0] = i end
-	for i = 0, #str do matrix[0][i] = i end
-	for i = 1, #self, 1 do
+	for i = 0, self:length() do matrix[i] = {}; matrix[i][0] = i end
+	for i = 0, str:length() do matrix[0][i] = i end
+	for i = 1, self:length(), 1 do
 		for j = 1, #str, 1 do
 			local cost = self:byte(i) == str:byte(j) and 0 or 1
 			matrix[i][j] = math.min(
@@ -210,12 +217,12 @@ function mt.__index:levDist(str)
 		)
 		end
 	end
-	return matrix[#self][#str]
+	return matrix[self:length()][str:length()]
 end
 
 function mt.__index:getSimilarity(str)
 	local dist = self:levDist(str)
-	return 1 - dist / math.max(#self, #str)
+	return 1 - dist / math.max(self:length(), str:length())
 end
 
 function mt.__index:empty()
@@ -252,16 +259,16 @@ end
 
 function mt.__index:cutLimit(max_len, symbol)
 	assert(max_len > 0, "Maximum length cannot be less than or equal to 1")
-	if #self > 0 and #self > max_len then
+	if self:length() > 0 and self:length() > max_len then
 		symbol = symbol or ".."
-		self = self:sub(1, max_len) .. symbol
+		self = utf8.sub(self, 1, max_len) .. symbol
 	end
 	return self
 end
 
 function mt.__index:switchLayout()
 	local result = ""
-	local b = self:find("^[%s%p]*%a") ~= nil
+	local b = utf8.find(self, "^[%s%p]*%a") ~= nil
 	local t = {
 		{"а", "f"}, {"б", ","}, {"в", "d"}, 
 		{"г", "u"}, {"д", "l"}, {"е", "t"}, 
@@ -287,7 +294,7 @@ function mt.__index:switchLayout()
 		{"Э", "\""}, {"Ю", ">"}, {"Я", "Z"}
 	}
 
-	for l in self:gmatch(".") do
+	for l in utf8.gmatch(self, ".") do
 		local fined = false
 		for _, v in ipairs(t) do
 			if l == v[b and 2 or 1] then

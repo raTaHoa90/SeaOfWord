@@ -1,0 +1,140 @@
+require "utils.func"
+local Array = require "utils.arrays"
+local circleDiametr = 147
+
+local lettersHash = {}
+
+local function letters_destroy(letters)
+	if letters then
+		for k, letter in ipairs(letters) do
+			go.delete(letter, true)
+		end
+	end
+end
+
+
+local function set_letters(self, letters)
+	if self.letters_go then 
+		letters_destroy(self.letters_go) 
+	end
+	self.count = 0
+	self.letters_go = {}
+	if letters then
+		self.letters = letters
+		for k, v in ipairs(letters) do
+			self.count = self.count + 1
+			local letter = factory.create("#letter_cr_factory")
+			self.letters_go[self.count] = letter
+			lettersHash[letter] = v
+			msg.post(letter, "set_letter", {letter = v})
+		end
+
+
+		local angle = (2 * math.pi) / self.count
+		local pos = go.get_world_position()
+		for i = 1, self.count do
+			local newAngle = angle * (i - 1)
+			local newPos = vmath.vector3(
+				pos.x + math.sin(newAngle) * circleDiametr,
+				pos.y + math.cos(newAngle) * circleDiametr,
+				0.11
+			)
+			go.set_position(newPos, self.letters_go[i])
+		end
+	else
+		self.letters = nil
+	end
+end
+
+local function letter_touched(self, letter)
+	local letter_pos = go.get_world_position(letter)
+	local mouse_pos = self.last_m_pos
+	local x = mouse_pos.x - letter_pos.x
+	local y = mouse_pos.y - letter_pos.y
+	local circleRadius = circleDiametr / 3
+	return circleRadius * circleRadius >= x*x + y*y
+end
+
+local function update_selectable_letter(self)
+	for i, letter in ipairs(self.letters_go) do
+		if letter_touched(self, letter) then 
+			msg.url(letter)
+			local selected = getProperty(letter, "letter_circle", "selected")
+			if selected then
+				local i = self.select:LastIndexOf(letter)
+				if i < self.select:Length() then 
+					local removeds = self.select:Splice(i + 1)
+					for n, delLetter in ipairs(removeds) do
+						setProperty(delLetter, "letter_circle", "selected", false)
+						msg.post(delLetter, "deselectable")
+					end
+				end
+			else
+				self.select:Push(letter)
+				setProperty(letter, "letter_circle", "selected", true)
+				msg.post(letter, "selectable")
+			end
+		end
+	end
+end
+
+function init(self)
+	self.last_m_pos = vmath.vector3(-9999, -9999, 0)
+	msg.post(".", "acquire_input_focus")
+	set_letters(self, self.letters or {})
+end
+
+function final(self)
+	letters_destroy(self.letters_go)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("init_letters") then
+		set_letters(self, message.letters)
+	end
+end
+
+local function not_equ_pos(pos1, pos2)
+	return pos1.x ~= pos2.x or pos1.y ~= pos2.y
+end
+
+function on_input(self, action_id, action)
+	if (action_id == hash("touch") and not_equ_pos(self.last_m_pos, action)) or action.released then
+		self.last_m_pos.x = action.x
+		self.last_m_pos.y = action.y
+		--pprint(action)
+
+		if action.pressed then
+			if self.select == nil then
+				self.select = Array({})
+				self.word = ""
+			end
+		elseif action.released then
+			print(action)
+			if self.select then
+				-- msg.post(???, "test_word_event", { word = self.word })
+				print("final word: ", self.word)
+				msg.post("/select_letters", "init_word", {word = ""})
+				for i, letter in ipairs(self.select) do
+					setProperty(letter, "letter_circle", "selected", false)
+					msg.post(letter, "deselectable")
+				end
+				self.word = ""
+				self.select = nil
+				
+			end
+		end
+
+		if self.select then
+			update_selectable_letter(self)
+
+			self.word = self.select:Map(function(letter) 
+				return lettersHash[letter]
+			end):Join("")
+
+			msg.post("/select_letters", "init_word", {word = self.word})
+			msg.post("/select_letters", "view_word")
+			
+		end
+	end
+end

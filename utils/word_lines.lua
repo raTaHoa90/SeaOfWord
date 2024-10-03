@@ -15,19 +15,19 @@ function WordLines:new(word)
 end
 
 function WordLines:size()
-	return self.word:len()
+	return self.word:length()
 end
 
 function WordLines:createCells(id_parent)
 	self.parent = id_parent
-	local parent_position = go.get_position(id_parent)
-	local delta_x = (w_screen - sizeSprite * (self.word:len() - 1)) / 2
+	local parent_position = go.get_world_position(id_parent)
+	local parent_scale = go.get_world_scale(id_parent)
+	local delta_x = (w_screen - parent_scale.x * sizeSprite * (self.word:length() - 1)) / 2
 
 
 	self.cells = {}
-	
-	for i = 1, self.word:len() do
-		local position = vmath.vector3(delta_x + sizeSprite * (i - 1), parent_position.y, parent_position.z)
+	for i = 1, self.word:length() do
+		local position = vmath.vector3(delta_x + parent_scale.x * sizeSprite * (i - 1), parent_position.y, parent_position.z)
 		local newCell = factory.create("#letter_sq_factory", position)
 
 		self.cells[i] = newCell
@@ -40,6 +40,12 @@ function WordLines:destroy()
 		for k, cell in ipairs(self.cells) do
 			go.delete(cell, true)
 		end
+	end
+end
+
+function WordLines:viewText()
+	for i = 1, self.word:length() do
+		msg.post(self.cells[i], "set_letter", {letter = self.letters[i]}) 
 	end
 end
 

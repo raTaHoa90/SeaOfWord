@@ -5,12 +5,16 @@ local function initWord(self, word)
 	if self.wline then
 		self.wline:destroy()
 	end
-	self.wline = WordLines:new(word)
-	self.wline:createCells(go.get_id())
+	if word:length() > 0 then
+		self.wline = WordLines:new(word)
+		self.wline:createCells(go.get_id())
+	else
+		self.wline = nil
+	end
 end
 
 function init(self)
-	
+	initWord(self, "")
 end
 
 function final(self)
@@ -28,5 +32,7 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("init_word") then
 		initWord(self, message.word)
+	elseif message_id == hash("view_word") then
+		self.wline:viewText()
 	end
 end
