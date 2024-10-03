@@ -10,11 +10,11 @@ instances {
   id: "select_letters"
   prototype: "/main/letter_sq/letters_sq_line.go"
   position {
-    y: -110.0
+    y: -77.0
   }
   scale3 {
-    x: 0.75
-    y: 0.75
+    x: 0.5
+    y: 0.5
   }
 }
 scale_along_z: 0

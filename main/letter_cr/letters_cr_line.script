@@ -51,7 +51,7 @@ local function letter_touched(self, letter)
 	local mouse_pos = self.last_m_pos
 	local x = mouse_pos.x - letter_pos.x
 	local y = mouse_pos.y - letter_pos.y
-	local circleRadius = circleDiametr / 2
+	local circleRadius = circleDiametr / 3
 	return circleRadius * circleRadius >= x*x + y*y
 end
 
@@ -66,11 +66,13 @@ local function update_selectable_letter(self)
 					local removeds = self.select:Splice(i + 1)
 					for n, delLetter in ipairs(removeds) do
 						setProperty(delLetter, "letter_circle", "selected", false)
+						msg.post(delLetter, "deselectable")
 					end
 				end
 			else
 				self.select:Push(letter)
 				setProperty(letter, "letter_circle", "selected", true)
+				msg.post(letter, "selectable")
 			end
 		end
 	end
@@ -92,27 +94,46 @@ function on_message(self, message_id, message, sender)
 	end
 end
 
+local function not_equ_pos(pos1, pos2)
+	return pos1.x ~= pos2.x or pos1.y ~= pos2.y
+end
+
 function on_input(self, action_id, action)
-	if action_id == hash("touch") and (self.last_m_pos.x ~= action.x or self.last_m_pos.y ~= action.y) then
+	if (action_id == hash("touch") and not_equ_pos(self.last_m_pos, action)) or action.released then
 		self.last_m_pos.x = action.x
 		self.last_m_pos.y = action.y
-		pprint(action)
+		--pprint(action)
 
 		if action.pressed then
 			if self.select == nil then
 				self.select = Array({})
+				self.word = ""
+			end
+		elseif action.released then
+			print(action)
+			if self.select then
+				-- msg.post(???, "test_word_event", { word = self.word })
+				print("final word: ", self.word)
+				msg.post("/select_letters", "init_word", {word = ""})
+				for i, letter in ipairs(self.select) do
+					setProperty(letter, "letter_circle", "selected", false)
+					msg.post(letter, "deselectable")
+				end
+				self.word = ""
+				self.select = nil
+				
 			end
 		end
 
 		if self.select then
 			update_selectable_letter(self)
 
-			local word = self.select:Map(function(letter) 
+			self.word = self.select:Map(function(letter) 
 				return lettersHash[letter]
 			end):Join("")
-			
-			print(word)
-			-- /select_letters
+
+			msg.post("/select_letters", "init_word", {word = self.word})
+			msg.post("/select_letters", "view_word")
 			
 		end
 	end
