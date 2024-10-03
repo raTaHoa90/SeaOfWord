@@ -16,5 +16,11 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("set_letter") then
 		set_letter(self, H(message.letter))
+	elseif message_id == hash("letter_good") then
+		go.animate("#sprite", 'tint', go.PLAYBACK_ONCE_FORWARD, vmath.vector4(0.396078431372549,0.7411764705882353,0.396078431372549, 1), go.EASING_INOUTQUAD, 0.25)
+	elseif message_id == hash("letter_hide") then
+		go.animate("#sprite", 'tint', go.PLAYBACK_ONCE_FORWARD, vmath.vector4(1, 1, 1, 1), go.EASING_INOUTQUAD, 0.25)
+	elseif message_id == hash("letter_bad") then
+		go.animate("#sprite", 'tint', go.PLAYBACK_ONCE_FORWARD, vmath.vector4(0.7411764705882353,0.396078431372549,0.396078431372549, 1), go.EASING_INOUTQUAD, 0.25)
 	end
 end
