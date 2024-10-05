@@ -1,0 +1,256 @@
+script: "/main/main_menu.gui_script"
+fonts {
+  name: "VAG_World"
+  font: "/assets/VAG_World.font"
+}
+textures {
+  name: "game-sprites"
+  texture: "/main/game-sprites.atlas"
+}
+nodes {
+  position {
+    x: 322.0
+    y: 939.0
+  }
+  scale {
+    x: 0.4
+    y: 0.4
+  }
+  size {
+    x: 300.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\243\321\200\320\276\320\262\320\265\320\275\321\214 1"
+  font: "VAG_World"
+  id: "level_number"
+  layer: "background"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 319.0
+    y: 480.0
+  }
+  scale {
+    x: 0.5
+    y: 0.43
+  }
+  type: TYPE_BOX
+  texture: "game-sprites/background"
+  id: "next_menu"
+  layer: "background"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 1.0
+    y: 432.23257
+  }
+  size {
+    x: 600.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\243\321\200\320\276\320\262\320\265\320\275\321\214 1 \320\277\321\200\320\276\320\271\320\264\320\265\320\275"
+  font: "VAG_World"
+  id: "level_complete"
+  parent: "next_menu"
+  layer: "buttons"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 1.0
+    y: 341.5349
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 400.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\230\320\267\321\203\320\274\320\270\321\202\320\265\320\273\321\214\320\275\320\276!"
+  font: "VAG_World"
+  id: "text1"
+  parent: "next_menu"
+  layer: "buttons"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -551.1628
+  }
+  type: TYPE_BOX
+  texture: "game-sprites/button-background"
+  id: "button_next_level"
+  parent: "next_menu"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 13.953488
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 400.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\243\321\200\320\276\320\262\320\265\320\275\321\214 2"
+  font: "VAG_World"
+  id: "button_next_level_caption"
+  parent: "button_next_level"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 320.0
+    y: 482.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  color {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  type: TYPE_BOX
+  id: "dialog_reloaded"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  scale {
+    x: 0.5
+    y: 0.5
+  }
+  type: TYPE_BOX
+  texture: "game-sprites/dialog"
+  id: "dialog"
+  parent: "dialog_reloaded"
+  layer: "dialogs"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 362.0
+  }
+  scale {
+    x: 1.25
+    y: 1.25
+  }
+  size {
+    x: 600.0
+    y: 200.0
+  }
+  type: TYPE_TEXT
+  text: "\320\224\320\262\320\265 \320\262\320\272\320\273\320\260\320\264\320\272\320\270\n"
+  "\321\201 \320\270\320\263\321\200\320\276\320\271?"
+  font: "VAG_World"
+  id: "text"
+  adjust_mode: ADJUST_MODE_ZOOM
+  parent: "dialog"
+  inherit_alpha: true
+  text_leading: 0.5
+}
+nodes {
+  position {
+    y: -315.1628
+  }
+  type: TYPE_BOX
+  texture: "game-sprites/button-background"
+  id: "button_refresh"
+  parent: "dialog"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 13.953488
+  }
+  scale {
+    x: 1.5
+    y: 1.5
+  }
+  size {
+    x: 400.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "\320\236\320\261\320\275\320\276\320\262\320\270\321\202\321\214"
+  font: "VAG_World"
+  id: "button_refresh_caption"
+  parent: "button_refresh"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 20.0
+  }
+  size {
+    x: 900.0
+    y: 400.0
+  }
+  color {
+    x: 0.4
+    y: 0.4
+    z: 0.4
+  }
+  type: TYPE_TEXT
+  text: "\320\237\320\276\321\205\320\276\320\266\320\265, \320\270\320\263\321\200\320\260 \320\276\321\202\320\272\321\200\321\213\321\202\320\260 \320\262 \320\275\320\265\321\201\320\272\320\276\320\273\321\214\320\272\320\270\321\205 \320\262\320\272\320\273\320\260\320\264\320\272\320\260\321\205 \320\261\321\200\320\260\321\203\320\267\320\265\321\200\320\260. \320\247\321\202\320\276\320\261\321\213 \320\277\321\200\320\276\320\264\320\276\320\273\320\266\320\270\321\202\321\214 \320\270\320\263\321\200\320\260\321\202\321\214 \320\262 \321\215\321\202\320\276\320\271 \320\262\320\272\320\273\320\260\320\264\320\272\320\265, \320\276\320\261\320\275\320\276\320\262\320\270\321\202\320\265 \321\201\321\202\321\200\320\260\320\275\320\270\321\206\321\203."
+  font: "VAG_World"
+  id: "text2"
+  adjust_mode: ADJUST_MODE_ZOOM
+  line_break: true
+  parent: "dialog"
+  inherit_alpha: true
+  text_leading: 0.5
+}
+nodes {
+  scale {
+    x: 3.221916
+    y: 9.584209
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  color {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  type: TYPE_BOX
+  id: "background"
+  parent: "dialog_reloaded"
+  layer: "foreground"
+  inherit_alpha: true
+  alpha: 0.5
+  size_mode: SIZE_MODE_AUTO
+}
+layers {
+  name: "background"
+}
+layers {
+  name: "buttons"
+}
+layers {
+  name: "foreground"
+}
+layers {
+  name: "dialogs"
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

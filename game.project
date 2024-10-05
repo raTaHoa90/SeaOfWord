@@ -58,3 +58,6 @@ show_console_banner = 0
 cssfile = /builtins/manifests/web/dark_theme.css
 htmlfile = /html/main.html
 
+[label]
+max_count = 128
+

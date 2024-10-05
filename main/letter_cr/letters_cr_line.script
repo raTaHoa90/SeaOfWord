@@ -85,6 +85,16 @@ function init(self)
 	set_letters(self, self.letters or {})
 end
 
+function update(self)
+	if html5 then
+		local hasActive = html5.run("jsApp.hasActive ?? 'ERROR'")
+		if hasActive == 'false' then
+			msg.post(".", "release_input_focus")
+			msg.post("/mainmenu", "disable_game")
+		end
+	end
+end
+
 function final(self)
 	letters_destroy(self.letters_go)
 end
@@ -103,7 +113,6 @@ function on_input(self, action_id, action)
 	if (action_id == hash("touch") and not_equ_pos(self.last_m_pos, action)) or action.released then
 		self.last_m_pos.x = action.x
 		self.last_m_pos.y = action.y
-		--pprint(action)
 
 		if action.pressed then
 			if self.select == nil then
@@ -113,10 +122,17 @@ function on_input(self, action_id, action)
 		elseif action.released then
 			if self.select then
 				local lineWord = LevelWords:getLineWord(self.word)
+				
 				if lineWord then 
-					msg.post(lineWord.line, "view_word", { word = self.word, good = true })
+					lineWord.active = false
+
+					if LevelWords:isAllComplete() then
+						LevelWords:next()
+					else
+						msg.post(lineWord.line, "view_word", { word = self.word, good = true })
+						html5.run("jsApp.levelAddWord('"..self.word.."')")
+					end
 				end
-				print("final word: ", self.word)
 				msg.post("/select_letters", "init_word", {word = ""})
 				for i, letter in ipairs(self.select) do
 					setProperty(letter, "letter_circle", "selected", false)
@@ -124,7 +140,7 @@ function on_input(self, action_id, action)
 				end
 				self.word = ""
 				self.select = nil
-				
+
 			end
 		end
 

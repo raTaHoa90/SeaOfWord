@@ -19,7 +19,7 @@ instances {
 }
 scale_along_z: 0
 embedded_instances {
-  id: "go"
+  id: "game"
   children: "letters_cr_line"
   children: "lines_word"
   children: "select_letters"
@@ -60,4 +60,12 @@ embedded_instances {
 embedded_instances {
   id: "lines_word"
   data: ""
+}
+embedded_instances {
+  id: "mainmenu"
+  data: "components {\n"
+  "  id: \"main_menu\"\n"
+  "  component: \"/main/main_menu.gui\"\n"
+  "}\n"
+  ""
 }
