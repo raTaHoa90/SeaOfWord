@@ -10,7 +10,7 @@ local LevelWord = {
 
 function LevelWord:initLevels(words)
 	if self.words:Length() > 0 then
-		for i, lineObj in ipairs(self.words) do
+		for _, lineObj in ipairs(self.words) do
 			msg.post(lineObj.line, "destroy_word")
 		end
 		self.words = Array({})
@@ -53,7 +53,7 @@ function LevelWord:initLevels(words)
 			equLettersPos:Push(ps)
 		end
 		
-		for i, letter in ipairs(lineObj.letters) do
+		for _, letter in ipairs(lineObj.letters) do
 			local ps = uniqueLetters:IndexOf(letter)
 			if ps == -1 then 
 				addUniqueLetter(letter)
@@ -79,7 +79,7 @@ function LevelWord:initLevels(words)
 end
 
 function LevelWord:getLineWord(word)
-	for i, lineObj in ipairs(self.words) do
+	for _, lineObj in ipairs(self.words) do
 		if lineObj.active and lineObj.word == word then
 			return lineObj
 		end
@@ -88,7 +88,7 @@ function LevelWord:getLineWord(word)
 end
 
 function LevelWord:isAllComplete()
-	for i, lineObj in ipairs(self.words) do
+	for _, lineObj in ipairs(self.words) do
 		if lineObj.active then
 			return false
 		end
@@ -109,8 +109,8 @@ local function callbackLoad(self, id, response)
 	local letters = LevelWord:initLevels(wordArray)
 	msg.post("/letters_cr_line", "init_letters", {letters = letters})
 
-	if html5 and #LevelWord.words_save > 0 then 
-		for i, word in ipairs(LevelWord.words_save) do
+	if html5 and LevelWord.words_save and #LevelWord.words_save > 0 then 
+		for _, word in ipairs(LevelWord.words_save) do
 			local lineObj = LevelWord:getLineWord(word)
 			if lineObj then
 				lineObj.active = false
@@ -129,10 +129,6 @@ function LevelWord:loadLevel(num)
 	local fileNum = ((num - 1) % 3) + 1
 	html5.run("jsApp.levelStart("..num..")")
 	http.request("js/levels/"..fileNum..".json", "GET", callbackLoad )
-	
-	--local levels = {"ТЕСТ","ТЕКСТ", "ТОСТ", "ТОРТ", "КОРТ", "РОТ", "КОТ","ТОК","РОСТ", "РОК", "СОРТ", "СОК", "ТРЕК"}
-	--local letters = self:initLevels({levels[num]}) -- "ТЕКСТ", "ТОСТ", "ТОРТ", "КОРТ", "РОТ", "КОТ","ТОК","РОСТ", "РОК", "СОРТ", "СОК", "ТРЕК"})
-	--msg.post("/letters_cr_line", "init_letters", {letters = letters})
 end
 
 function LevelWord:load()

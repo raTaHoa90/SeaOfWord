@@ -30,3 +30,15 @@ embedded_components {
   data: "prototype: \"/main/letter_cr/letter_circle.go\"\n"
   ""
 }
+embedded_components {
+  id: "point_factory"
+  type: "factory"
+  data: "prototype: \"/main/polygons/point.go\"\n"
+  ""
+}
+embedded_components {
+  id: "line_factory"
+  type: "factory"
+  data: "prototype: \"/main/polygons/line.go\"\n"
+  ""
+}

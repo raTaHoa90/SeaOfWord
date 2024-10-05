@@ -19,4 +19,10 @@ images {
 images {
   image: "/assets/sprites/button-background-active.png"
 }
+images {
+  image: "/assets/sprites/line.png"
+}
+images {
+  image: "/assets/sprites/point.png"
+}
 extrude_borders: 2

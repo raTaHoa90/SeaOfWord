@@ -5,9 +5,11 @@ local circleDiametr = 147
 
 local lettersHash = {}
 
+local points = Array({})
+
 local function letters_destroy(letters)
 	if letters then
-		for k, letter in ipairs(letters) do
+		for _, letter in ipairs(letters) do
 			go.delete(letter, true)
 		end
 	end
@@ -22,7 +24,7 @@ local function set_letters(self, letters)
 	self.letters_go = {}
 	if letters then
 		self.letters = letters
-		for k, v in ipairs(letters) do
+		for _, v in ipairs(letters) do
 			self.count = self.count + 1
 			local letter = factory.create("#letter_cr_factory")
 			self.letters_go[self.count] = letter
@@ -53,19 +55,31 @@ local function letter_touched(self, letter)
 	local x = mouse_pos.x - letter_pos.x
 	local y = mouse_pos.y - letter_pos.y
 	local circleRadius = circleDiametr / 3
-	return circleRadius * circleRadius >= x*x + y*y
+	return circleRadius^2 >= x^2 + y^2
+end
+
+local function destroy_polygon_lines()
+	if points:Length() > 0 then
+		for _, v in ipairs(points) do
+			go.delete(v.point)
+			if v.line then
+				go.delete(v.line)
+			end
+		end
+		points = Array({})
+	end
 end
 
 local function update_selectable_letter(self)
-	for i, letter in ipairs(self.letters_go) do
+	for _, letter in ipairs(self.letters_go) do
 		if letter_touched(self, letter) then 
-			msg.url(letter)
+			--msg.url(letter)
 			local selected = getProperty(letter, "letter_circle", "selected")
 			if selected then
 				local i = self.select:LastIndexOf(letter)
 				if i < self.select:Length() then 
 					local removeds = self.select:Splice(i + 1)
-					for n, delLetter in ipairs(removeds) do
+					for _, delLetter in ipairs(removeds) do
 						setProperty(delLetter, "letter_circle", "selected", false)
 						msg.post(delLetter, "deselectable")
 					end
@@ -75,6 +89,36 @@ local function update_selectable_letter(self)
 				setProperty(letter, "letter_circle", "selected", true)
 				msg.post(letter, "selectable")
 			end
+		end
+	end
+end
+
+local function add_point(x, y)
+	local position = vmath.vector3(x, y, 0.5)
+	local point = factory.create("#point_factory", position)
+	points:Push({
+		position = position,
+		point = point,
+		line = nil
+	})
+end
+
+local function update_points_toSelectable(self, cursor_point)
+	destroy_polygon_lines()
+	
+	for _, letter in ipairs(self.select) do
+		local selected = getProperty(letter, "letter_circle", "selected")
+		if selected then 
+			local position = go.get_world_position(letter)
+			add_point(position.x, position.y)
+		end
+	end
+	add_point(cursor_point.x, cursor_point.y)
+
+	for i, point in ipairs(points) do
+		if i < points:Length() then
+			point.line = factory.create("#line_factory", point.position)
+			msg.post(point.line, "set_point_two", {to_point = points[i+1].position})
 		end
 	end
 end
@@ -134,18 +178,21 @@ function on_input(self, action_id, action)
 					end
 				end
 				msg.post("/select_letters", "init_word", {word = ""})
-				for i, letter in ipairs(self.select) do
+				for _, letter in ipairs(self.select) do
 					setProperty(letter, "letter_circle", "selected", false)
 					msg.post(letter, "deselectable")
 				end
 				self.word = ""
 				self.select = nil
-
+				
+				destroy_polygon_lines()
 			end
 		end
 
 		if self.select then
 			update_selectable_letter(self)
+
+			update_points_toSelectable(self, action)
 
 			self.word = self.select:Map(function(letter) 
 				return lettersHash[letter]

@@ -29,7 +29,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("view_word") and self.wline then
 		self.wline:viewText()
 		if message.good then
-			for i, cell in ipairs(self.wline.cells) do
+			for _, cell in ipairs(self.wline.cells) do
 				msg.post(cell, "letter_good")
 			end
 		end

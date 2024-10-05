@@ -1,4 +1,5 @@
 -- HELP: https://github.com/HuotChu/ArrayForLua
+-- Edited by raTaHoa
 
 local Array, Methods = {}, {}
 
@@ -128,6 +129,23 @@ Methods = {
 	end,
 
 	------------------[[  Array Methods  ]]------------------
+
+	Clone = function (t)
+		local tableInfo = Methods.getTableType(t)
+		local newArray = Array({})
+
+		if tableInfo.isArray then
+			for _, v in ipairs(t) do
+				table.insert(newArray, v)
+			end
+		elseif tableInfo.isDictionary then
+			for k, v in pairs(t) do
+				newArray[k] = v
+			end
+		end
+
+		return newArray
+	end,
 
 	BinaryFirst = function (t, searchElement, startIndex, stopIndex)
 		local middle, value

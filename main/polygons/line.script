@@ -1,0 +1,32 @@
+require("utils.func")
+
+function init(self)
+	self.position = go.get_position()
+	self.target_position = go.get_position()
+	self.scale = go.get_scale()
+end
+
+local function getMiddlePoint(point1, point2)
+	return vmath.vector3(
+		(point1.x + point2.x) / 2, 
+		(point1.y + point2.y) / 2, 
+		0.5
+	)
+end
+
+local function drawLine(self)
+	local distance = dist2d(self.position, self.target_position)
+	self.scale.x = distance / 2
+	go.set_scale(self.scale)
+	local direction = angle_between_two_points(self.position, self.target_position)
+	local rotation = vmath.quat_rotation_z(direction)
+	go.set_rotation(rotation)
+	go.set_position(getMiddlePoint(self.position, self.target_position))
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("set_point_two") then
+		self.target_position = message.to_point
+		drawLine(self)
+	end
+end

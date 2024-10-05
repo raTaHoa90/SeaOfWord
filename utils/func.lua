@@ -38,3 +38,11 @@ function setProperty(go_id, scriptname, property, value)
 	go.set(url, property, value)
 end
 
+function dist2d(point1, point2)
+	return ((point2.x - point1.x)^2 + (point2.y - point1.y)^2)^0.5
+end
+
+function angle_between_two_points(point1, point2) 
+	return math.atan2(point2.y - point1.y, point2.x - point1.x) 
+end
+

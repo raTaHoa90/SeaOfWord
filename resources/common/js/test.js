@@ -1,26 +1,5 @@
 'use strict';
 
-const 
-    BCD = 'Content-Disposition: form-data; name="',
-    BCT = 'multipart/form-data',
-    RN  = "\r\n";
-
-function joinObject(data){
-    data = data || {};
-    let a = arguments,
-        obj, nm, c, 
-        i = 1,
-        l = a.length;
-    for(;i<l;i++)
-        if((obj = a[i]) != null)
-            for(nm in obj){
-                let value = obj[nm];
-                if(data === value) continue;
-                if(value !== undefined)
-                    data[nm] = value
-            }
-    return data
-};
 
 String.randomInt = () => String(Math.random()).slice(2);
 
