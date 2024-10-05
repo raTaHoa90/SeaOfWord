@@ -16,4 +16,7 @@ images {
 images {
   image: "/assets/sprites/dialog.png"
 }
+images {
+  image: "/assets/sprites/button-background-active.png"
+}
 extrude_borders: 2

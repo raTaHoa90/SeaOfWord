@@ -24,201 +24,9 @@ function joinObject(data){
 
 String.randomInt = () => String(Math.random()).slice(2);
 
-class Ajax {
-    #testXhr = true;
-    #options = {
-        async: true,
-        dataType: 'text',
-        types: {
-            text:   r => r.responseText,
-            json:   r => JSON.parse(r.responseText),
-            script: r => eval(r.responseText),
-            xml:    r => r.responseXML,
-            binary: r => r.response
-        },
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8", // тип контента по умолчанию, (multipart/form-data, для отправок с файлами) 
-        url: location.href,
-        type: 'GET',
-        send: 'send',
-        binary: false
-        /*
-			form: <FORM>                     // указание формы, с которой автоматически добавлять данные (только для POST)
-			data: <FORM|Object|String|Array> // данные, которые следует отправить в запросе
-			method: <=type>                  // тип отправки GET, POST, PUT, DELETE, TRACE
-			multi: <boolean>                 // если надо передавать в стиле multipart/form-data
-			headers: <hash>                  // передаваемые заголовки в ajax
-			login:
-			password:
-			url:
-			timeout: <milisec>               // время ожидания
-			boundary: <num>                  // принудительный BIN
-			send: <string>                   // метод отправки данных
-			binary: <bool>                   // если ненужно кодировать данные для отправки (только для POST)
-
-			load:     <func> // событие, при успешном получении данных 
-			error:    <func> // событие при неуспешном получении данных
-			abort:    <func> // событие при отмене запроса
-			time:     <func> // событие по привышении ожидания
-			progress: <func> // событие прогресса загрузки с сервера
-			upload:   <func> // прогресс загрузки даннын на сервер
-        */
-    }
-
-    constructor(options){
-        if(options)
-            joinObject(this.#options, options)
-    }
-
-    #_xhr(){
-        if(!this.#testXhr) 
-            return false;
-        try{
-            return new Window.XMLHttpRequest();
-        }catch(e){
-            this.#testXhr = false;
-            return false;
-        }
-    }
-
-    #_to_param(name, value, boundary){
-        if(value == undefined) 
-            return [];
-
-        if(Array.isArray(value))
-            return value.reduce(function(result, data){
-                result.push(boundary 
-                    ? BCD + name + '"' + RN + RN + data + RN 
-                    : name + '=' + encodeURIComponent(data) );
-                return result;
-            }, []);
-        return [boundary 
-            ? BCD + name + '"' + RN + RN + value + RN 
-            : name + '=' + encodeURIComponent(value)
-        ]
-    }
-    #_to_result(arr, boundary){
-        return arr.join(boundary ? '--' + boundary + RN : '&' ) + (boundary ? '--' + boundary + '--' + RN : '');
-    }
-    #_getObj(obj, boundary){
-        if(!(Array.isArray(obj) || typeof(obj) == 'object')) 
-            return boundary ? this.#_to_result(obj, boundary) : 'value=' + encodeURIComponent(obj);
-        let result = boundary ? [RN] : [];
-        for(let i in obj)
-            if(![undefined, null].includes(obj[i]))
-                [].push.apply(result, this.#_to_param(i, obj[i], boundary));
-    }
-
-    send(url, options) {
-        if(typeof url == 'object'){
-            options = url;
-            url = undefined;
-        }
-
-        var opts = joinObject({}, this.#options, options);
-        let method = ((opts.method ? opts.method : opts.type) || 'POST').toUpperCase(),
-            multi;
-        url = url || opts.url;
-        data = opts.data;
-        boundary = opts.boundary || String.randomInt();
-
-        if(opts.binary && method != 'GET')
-            multi = 0;
-        else {
-            multi = opts.multi || false;
-            if(data)
-                data = this.#_getObj(data, multi ? boundary : null);
-        }
-
-        let URL = url + ( method == 'GET' && data ? '?' + data : '');
-        let xhr = this.#_xhr(),
-            contentType;
-        if(multi)
-            contentType = BCT + '; boundary=' + boundary;
-        else
-            contentType = opts.contentType;
-
-        xhr.open(method, URL, opts.async, opts.login, opts.password);
-
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        if(contentType != BCT)
-            xhr.setRequestHeader('Content-Type', contentType);
-
-        if(opts.headers)
-            for(let i in opts.headers)
-                x.setRequestHeader(i, opts.headers[i]);
-        
-        if(opts.timeout)
-            xhr.timeout = opts.timeout;
-
-        if(opts.upload){
-            var ttl = 0;
-            xhr.upload.onprogress = e => { ttl = e.total; opts.upload(e.loaded, ttl, e.lengthComputable) };
-            xhr.upload.onload = e => opts.upload(ttl, ttl);
-        }
-
-        if(opts.progress)
-            xhr.onprogress = e => opts.progress(e.loaded, e.total, e.lengthComputable);
-
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState==4){
-                let statusCode = xhr.status, 
-                    statusText = xhr.statusText, 
-                    headers = xhr.getAllResponseHeaders();
-                
-                if(statusCode > 199 && statusCode < 300){
-                    if(opts.load)
-                        opts.load(this.#options.types[opts.dataType](xhr), statusCode, headers);
-                } else {
-                    if(opts.error)
-                        opts.error(xhr, statusCode, headers);
-                }
-            }
-        };
-        xhr.onabort = opts.abort;
-        xhr.ontimeout = opts.time;
-
-        xhr[opts.send](method=='POST' ? data || null : null);
-        return boundary;
-    }
-
-    #_ajax( method, url, data, callback, type ) { 
-        // Shift arguments if data argument was omitted
-        if ( typeof(data) == 'function' ) {
-            type = type || ccallback;
-            callback = data;
-            data = undefined;
-        }
-
-        // The url can be an options object (which then must have .url)
-        return this.send( {
-            url,
-            type: method,
-            dataType: type || this.#options.dataType,
-            data,
-            load: callback   // функция обработчик
-        } );
-    }
-
-    static get(url, data, callback, type){
-        return (new Ajax()).#_ajax('GET', url, data, callback, type);
-    }
-
-    static post(url, data, callback, type){
-        return (new Ajax()).#_ajax('POST', url, data, callback, type);
-    }
-
-    static json(url, data, callback){
-        return (new Ajax()).#_ajax('POST', url, data, callback, 'json');
-    }
-
-    static script(url, data, callback){
-        return (new Ajax()).#_ajax('GET', url, data, callback, 'script');
-    }
-}
-
 class IStorage {
     has(key){ return false; }
-    get(key){ return undefined; }
+    get(key, def){ return undefined; }
     set(key, value){ }
     remove(key) { }
 }
@@ -249,18 +57,23 @@ class Storage extends IStorage {
         return this.#_s(key) in this.#storeObj;
     }
 
-    get(key){
-        let value = this.#storeObj[this.#_s(key)];
+    get(key, def){
+        let value = this.#storeObj[this.#_s(key)] ?? def;
         if(this.#isData){
             if(typeof(value) != 'string')
                 return value;
+            else if(value == '')
+                return ''
             try{
                 return JSON.parse(value);
             }catch(e){
                 return value;
             }
-        } else 
+        } else try{
             return JSON.parse(value);
+        }catch(e){
+            return value
+        }
     }
 
     set(key, value){
@@ -306,8 +119,8 @@ class CookieStorage extends IStorage {
         return this.#storage.has(key);
     }
 
-    get(key){
-        return this.#storage.get(key);
+    get(key, def){
+        return this.#storage.get(key) ?? def;
     }
 
     set(key, value, daysToLive, path, domain, secure){
@@ -343,12 +156,14 @@ class JSApp {
     #cookieStorage;
     #initKey;
     #isActive;
+    #storage;
     constructor(appName){
         appName = appName.replace(/ /g, '_');
         this.#cookieStorage = new CookieStorage();
         this.#initKey = String.randomInt();
         this.#cookieStorage.set(appName + '_init_key', this.#initKey);
         this.#isActive = true;
+        this.#storage = new Storage();
         setInterval(() =>{ 
             this.#cookieStorage = new CookieStorage();
             this.#isActive = this.#cookieStorage.get(appName + '_init_key') == this.#initKey 
@@ -357,6 +172,27 @@ class JSApp {
 
     get cookie(){ return this.#cookieStorage; }
     get hasActive(){ return this.#isActive; }
+    get storage(){ return this.#storage; }
+
+    levelStart(num){
+        this.#storage.set('save_level', num);
+        this.#storage.set('save_words', '')
+    }
+
+    levelAddWord(word){
+        let words = this.#storage.get('save_words', '');
+        if(words != '')
+            words += ',';
+        this.#storage.set('save_words', words + word);
+    }
+
+    levelWords(){
+        let words = this.#storage.get('save_words', '');
+        if(words == '')
+            return JSON.stringify([]);
+        else
+            return JSON.stringify(words.split(','));
+    }
 }
 
 
