@@ -14,7 +14,7 @@ function H(str)
 end
 
 function hash_to_str(h)
-	return hached[h] or h
+	return hached[h] or ""
 end
 
 

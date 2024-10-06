@@ -1,6 +1,5 @@
 require "utils.func"
 go.property("letter", hash(""))
-H("")
 
 local function set_letter(self, letter)
 	if self.letter ~= letter then

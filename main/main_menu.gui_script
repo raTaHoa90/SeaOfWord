@@ -3,9 +3,6 @@ local popup_active = false
 function init(self)
 	msg.post(".", "acquire_input_focus")
 
-	self.label_level          = gui.get_node("level_number")
-	self.label_level_complete = gui.get_node("level_complete")
-	self.button_next_level    = gui.get_node("button_next_level_caption")
 	self.next_menu            = gui.get_node("next_menu")
 	self.dialog_reloaded      = gui.get_node("dialog_reloaded")
 
@@ -21,13 +18,6 @@ local function setLevelNumber(self, level)
 	gui.set_text(gui.get_node("level_complete"),            "Уровень "..(level-1).." пройден")
 	gui.set_text(gui.get_node("button_next_level_caption"), "Уровень "..level)
 end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("set_level") then

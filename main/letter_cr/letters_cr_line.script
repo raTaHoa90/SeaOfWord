@@ -49,7 +49,7 @@ local function set_letters(self, letters)
 	end
 end
 
-local function letter_touched(self, letter)
+local function has_letter_touched(self, letter)
 	local letter_pos = go.get_world_position(letter)
 	local mouse_pos = self.last_m_pos
 	local x = mouse_pos.x - letter_pos.x
@@ -72,8 +72,7 @@ end
 
 local function update_selectable_letter(self)
 	for _, letter in ipairs(self.letters_go) do
-		if letter_touched(self, letter) then 
-			--msg.url(letter)
+		if has_letter_touched(self, letter) then 
 			local selected = getProperty(letter, "letter_circle", "selected")
 			if selected then
 				local i = self.select:LastIndexOf(letter)
@@ -153,6 +152,21 @@ local function not_equ_pos(pos1, pos2)
 	return pos1.x ~= pos2.x or pos1.y ~= pos2.y
 end
 
+local function complite_word(word)
+	local lineWord = LevelWords:getLineWord(word)
+
+	if lineWord then 
+		lineWord.active = false
+
+		if LevelWords:isAllComplete() then
+			LevelWords:next()
+		else
+			msg.post(lineWord.line, "view_word", { word = word, good = true })
+			html5.run("jsApp.levelAddWord('"..word.."')")
+		end
+	end
+end
+
 function on_input(self, action_id, action)
 	if (action_id == hash("touch") and not_equ_pos(self.last_m_pos, action)) or action.released then
 		self.last_m_pos.x = action.x
@@ -165,18 +179,8 @@ function on_input(self, action_id, action)
 			end
 		elseif action.released then
 			if self.select then
-				local lineWord = LevelWords:getLineWord(self.word)
+				complite_word(self.word)
 				
-				if lineWord then 
-					lineWord.active = false
-
-					if LevelWords:isAllComplete() then
-						LevelWords:next()
-					else
-						msg.post(lineWord.line, "view_word", { word = self.word, good = true })
-						html5.run("jsApp.levelAddWord('"..self.word.."')")
-					end
-				end
 				msg.post("/select_letters", "init_word", {word = ""})
 				for _, letter in ipairs(self.select) do
 					setProperty(letter, "letter_circle", "selected", false)
