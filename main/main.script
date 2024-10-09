@@ -1,4 +1,4 @@
-local LevelWords = require "utils.levels"
+local LevelWords = require "main.levels"
 
 function init(self)
 	msg.post(".", "acquire_input_focus")

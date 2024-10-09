@@ -1,6 +1,6 @@
 require "utils.func"
 local Array = require "utils.arrays"
-local LevelWords = require "utils.levels"
+local LevelWords = require "main.levels"
 local circleDiametr = 147
 
 local lettersHash = {}

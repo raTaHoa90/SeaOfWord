@@ -1,4 +1,4 @@
-local WordLines = require "utils.word_lines"
+local WordLines = require "main.word_lines"
 
 
 local function initWord(self, word)
